@@ -2,10 +2,10 @@
 library(dplyr)
 
 ## Let a be a two digit integer
-##a can be represented as digits a1a2
-## in other words a = 10a1 + a2, where a1 and a2 are integers 0-9
+## a can be represented as digits a1a2
+## in other words a = 10a1 + a2, where a1 and a2 are integers 0-9. 
 
-## square a
+## squaring a gives
 ## a^2 = (10a1 + a2)^2 = 100a1^2 + 20a1a2 + a2^2
 
 ## we want to subtract the ones digit from a^2
@@ -14,39 +14,40 @@ library(dplyr)
 
 ## if a2 = 0, 1, 2, 3 we subtract a2^2 = 0, 1, 4, 9 and then divide by 10.
 ## if a2 = 4-9, we subtract a2^2, but we have to account 
-## for the extra tens digit
+## for the extra tens digit 
 
 ## for example if a2 = 4, to drop the ones digit
 ## we are really subtracting 6 and dividing by 10.
 ## we can represent this as subtracting a2^2 or 16,
-## then adding ten and finally dividing by 10.
+## adding 10 and finally dividing by 10.
 
 a2_digits <- seq(0, 9)
 tens_digits_to_add <- floor((a2_digits^2)/10)
 
 ## we have a^2 = 100a1 + 20a1a2 + a2^2
-## let's refer to the tens digit to add above as d2. 
+## let's refer to the tens digit to add above as d2.
 
 ## if we drop the ones digit from a^2, this is equivalent to 
 ## (100a1^2 + 20a1a2 + a2^2 - a2^2 + 10d2)/10
-## in other words, subtracting a2^2 adding a tens digit
+## in other words, subtracting a2^2 adding d2
 ## and dividing by 10
 
-## this gives us, after dropping the ones digit
+## simplifying, this gives us
 ## 10a1^2 + 2a1a2 + d2
 
 ## so we now have the conditions:
 ## a1 and a2 are digits 0-9
 ## 10a1^2 + 2a2a1 + d2 = b^2, a square number
-## or 10a1^2 + 2a2a1 + (d2 - b^2) = 0
+## 10a1^2 + 2a2a1 + (d2 - b^2) = 0
 
-## let's apply the quadratic formula on a1
+## let's apply the quadratic formula on the above expression, using a1 as our variable
 ## a1 = (-2a2 +-sqrt(4a2^2 - 40(d2 - b^2)))/20
-## because a1 and a2 are positive, we can remove the +- and 
-## just take the + expression
+
+## because a1 and a2 are positive, and the denominator is positive (20)
+## we can replace the +- with +
 ## a1 = (-2a2 + sqrt(4a2^2 - 40(d2 - b^2)))/20
 
-##we need the discriminant 4a2^2 - 40(d2 - b^2) 
+## we need the discriminant 4a2^2 - 40(d2 - b^2) 
 ## to be a positive square number 
 ## discriminant is 4a2^2 - 40d2 + 40b^2
 
@@ -60,7 +61,8 @@ print(disc)
 a1 <- paste0("(", (-2 * a2_digits), " + sqrt(", disc, "))/20")
 print(a1)
 
-## if we take the example for 16^2 = 256, we use the expression
+## example 
+## if we take the example for 16^2 = 256, 
 ## then a1 = 1, a2 = 6, d = 3 and b = 5
 ## the a1 vector above has 10 expressions for a2 digits 0...9
 ## because a2 = 6, we take the 7th expression
@@ -71,18 +73,19 @@ print(a1)
 
 
 ## we can see that our conditions now are that 
-## the numerator for the a1 expression is divisible by 20
-## and b itself must be an integer
-## to be divisible by 20, while b is also an integer. 
+## (i) the numerator for the a1 expression is divisible by 20
+##  (ii) b itself must be an integer
 
 ## the easiest way I can think of is to take 
 ## each of the expressions for a1, iterate through all
 ## integer values of b, and see if the result is an integer.
+
 ## importantly, these expressions work even if our initial integer
 ## a has more than 2 digits. we can just think of a2 as the last 
 ## digit in a, and a1 as all the other digits.
+## so if a =123, then a1 = 12 and a2 = 3
 
-max_b <- 1000000
+max_b <- 1000000 
 
 good_pairs <- lapply(seq(0,9), function(x){
   print(x)
@@ -115,14 +118,13 @@ write.csv(all_good_pairs, "all_good_pairs.csv")
 
 
 ## BONUS
+## checked through 5,000,000,000, no additional results
 
-## a = 100a0 + 10a1 + a2
-## a^2 = (100a0 + 10a1 + a2)(100a0 + 10a1 + a2)
-## a^2 = 10000a0^2 + 2000a0a1 + 200a0a2 + 100a1^2 + 20a1a2 + a2^2
 
 max_a0 <- 1000000
 l <- list()
-for(i in seq(5000, 10000)){
+
+for(i in seq(0, 10)){
   print(i)
   
   for(j in seq(max_a0)){
@@ -137,3 +139,5 @@ for(i in seq(5000, 10000)){
     }
   }
 }
+
+print(l)
